@@ -1,6 +1,6 @@
 /**
  * A resource factory inspired by $resource from AngularJS
- * @version v1.0.1 - 2014-01-29
+ * @version v1.0.2 - 2014-02-28
  * @link https://github.com/FineLinePrototyping/angularjs-rails-resource.git
  * @author 
  */
@@ -1407,7 +1407,7 @@
                  *      has completed.
                  */
                 RailsResource.prototype.$http = function (httpConfig, resourceConfigOverrides) {
-                    return this.constructor.$http(httpConfig, this, resourceConfigOvverides);
+                    return this.constructor.$http(httpConfig, this, resourceConfigOverrides);
                 };
 
                 angular.forEach(['post', 'put', 'patch'], function (method) {
