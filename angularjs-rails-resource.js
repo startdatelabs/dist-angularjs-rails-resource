@@ -1,6 +1,6 @@
 /**
  * A resource factory inspired by $resource from AngularJS
- * @version v1.1.1 - 2014-04-12
+ * @version v1.2.0 - 2014-06-07
  * @link https://github.com/FineLinePrototyping/angularjs-rails-resource.git
  * @author 
  */
@@ -1247,28 +1247,36 @@
                         resourceConstructor = config.resourceConstructor,
                         promise = $q.when(httpConfig);
 
-                    promise = this.runInterceptorPhase('beforeRequest', context, promise).then(function (httpConfig) {
-                        httpConfig = resourceConstructor.serialize(httpConfig);
+                    if (!config.skipRequestProcessing) {
 
-                        forEachDependency(config.requestTransformers, function (transformer) {
-                            httpConfig.data = transformer(httpConfig.data, config.resourceConstructor);
-                        });
+                        promise = this.runInterceptorPhase('beforeRequest', context, promise).then(function (httpConfig) {
+                            httpConfig = resourceConstructor.serialize(httpConfig);
 
-                        return httpConfig;
-                    });
+                            forEachDependency(config.requestTransformers, function (transformer) {
+                                httpConfig.data = transformer(httpConfig.data, config.resourceConstructor);
+                            });
 
-                    promise = this.runInterceptorPhase('beforeRequestWrapping', context, promise);
-
-                    if (config.rootWrapping) {
-                        promise = promise.then(function (httpConfig) {
-                            httpConfig.data = railsRootWrapper.wrap(httpConfig.data, config.resourceConstructor);
                             return httpConfig;
                         });
-                    }
 
-                    promise = this.runInterceptorPhase('request', context, promise).then(function (httpConfig) {
-                        return $http(httpConfig);
-                    });
+                        promise = this.runInterceptorPhase('beforeRequestWrapping', context, promise);
+
+                        if (config.rootWrapping) {
+                            promise = promise.then(function (httpConfig) {
+                                httpConfig.data = railsRootWrapper.wrap(httpConfig.data, config.resourceConstructor);
+                                return httpConfig;
+                            });
+                        }
+
+                        promise = this.runInterceptorPhase('request', context, promise).then(function (httpConfig) {
+                            return $http(httpConfig);
+                        });
+
+                    } else {
+
+                        promise = $http(httpConfig);
+
+                    }
 
                     promise = this.runInterceptorPhase('beforeResponse', context, promise);
 
@@ -1415,10 +1423,10 @@
                 };
 
                 angular.forEach(['post', 'put', 'patch'], function (method) {
-                    RailsResource['$' + method] = function (url, data) {
+                    RailsResource['$' + method] = function (url, data, resourceConfigOverrides) {
                         // clone so we can manipulate w/o modifying the actual instance
                         data = angular.copy(data);
-                        return this.$http(angular.extend({method: method, url: url, data: data}, this.getHttpConfig()));
+                        return this.$http(angular.extend({method: method, url: url, data: data}, this.getHttpConfig()), null, resourceConfigOverrides);
                     };
 
                     RailsResource.prototype['$' + method] = function (url) {
