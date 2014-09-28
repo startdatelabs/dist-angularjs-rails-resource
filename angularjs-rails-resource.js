@@ -1,6 +1,6 @@
 /**
  * A resource factory inspired by $resource from AngularJS
- * @version v1.2.0 - 2014-06-07
+ * @version v1.2.1 - 2014-09-28
  * @link https://github.com/FineLinePrototyping/angularjs-rails-resource.git
  * @author 
  */
@@ -1277,8 +1277,6 @@
                         promise = $http(httpConfig);
 
                     }
-
-                    promise = this.runInterceptorPhase('beforeResponse', context, promise);
 
                     promise = this.runInterceptorPhase('beforeResponse', context, promise).then(function (response) {
                       // store off the data so we don't lose access to it after deserializing and unwrapping
