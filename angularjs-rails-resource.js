@@ -1,6 +1,6 @@
 /**
  * A resource factory inspired by $resource from AngularJS
- * @version v1.2.2 - 2015-02-07
+ * @version v1.2.3 - 2015-02-09
  * @link https://github.com/FineLinePrototyping/angularjs-rails-resource.git
  * @author 
  */
@@ -575,7 +575,7 @@
                  * @returns {*} A new object or array that is ready for JSON serialization
                  */
                 Serializer.prototype.serialize = function (data) {
-                    var result = this.serializeValue(data),
+                    var result = angular.copy(data),
                         self = this;
 
                     if (angular.isObject(result)) {
@@ -598,6 +598,8 @@
                             }
                         });
                     }
+
+                    result = this.serializeValue(result);
 
                     return result;
                 };
