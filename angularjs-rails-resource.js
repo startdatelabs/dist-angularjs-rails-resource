@@ -1,6 +1,6 @@
 /**
  * A resource factory inspired by $resource from AngularJS
- * @version v2.0.0 - 2015-02-11
+ * @version v2.1.0 - 2016-03-20
  * @link https://github.com/FineLinePrototyping/angularjs-rails-resource.git
  * @author 
  */
@@ -143,7 +143,7 @@
                 return url;
             }
 
-            if (url.indexOf($interpolate.startSymbol()) === -1) {
+            if (!config.singular && url.indexOf($interpolate.startSymbol()) === -1) {
                 url = url + '/' + $interpolate.startSymbol() + idAttribute + $interpolate.endSymbol();
             }
 
@@ -759,6 +759,7 @@
             defaultParams: undefined,
             underscoreParams: true,
             fullResponse: false,
+            singular: false,
             extensions: []
         };
 
@@ -976,6 +977,8 @@
                             mixin.configure(this.config, cfg);
                         }
                     }, this);
+
+                    return this.config;
                 };
 
                 /**
